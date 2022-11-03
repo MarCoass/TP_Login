@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 02-11-2022 a las 20:27:07
+-- Tiempo de generación: 03-11-2022 a las 18:28:25
 -- Versión del servidor: 10.4.24-MariaDB
 -- Versión de PHP: 7.4.29
 
@@ -53,6 +53,7 @@ CREATE TABLE `usuario` (
 --
 
 CREATE TABLE `usuariorol` (
+  `idur` bigint(20) NOT NULL,
   `idusuario` bigint(20) NOT NULL,
   `idrol` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -77,8 +78,9 @@ ALTER TABLE `usuario`
 -- Indices de la tabla `usuariorol`
 --
 ALTER TABLE `usuariorol`
-  ADD KEY `idrol` (`idrol`),
-  ADD KEY `idusuario` (`idusuario`);
+  ADD PRIMARY KEY (`idur`),
+  ADD KEY `idusuario` (`idusuario`),
+  ADD KEY `idrol` (`idrol`);
 
 --
 -- Restricciones para tablas volcadas
@@ -88,8 +90,8 @@ ALTER TABLE `usuariorol`
 -- Filtros para la tabla `usuariorol`
 --
 ALTER TABLE `usuariorol`
-  ADD CONSTRAINT `usuariorol_ibfk_1` FOREIGN KEY (`idrol`) REFERENCES `rol` (`idRol`),
-  ADD CONSTRAINT `usuariorol_ibfk_2` FOREIGN KEY (`idusuario`) REFERENCES `usuario` (`idUsuario`);
+  ADD CONSTRAINT `usuariorol_ibfk_1` FOREIGN KEY (`idusuario`) REFERENCES `usuario` (`idUsuario`),
+  ADD CONSTRAINT `usuariorol_ibfk_2` FOREIGN KEY (`idrol`) REFERENCES `rol` (`idRol`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
