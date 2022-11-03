@@ -1,208 +1,192 @@
 <?php
-include_once ('conector/BaseDatos.php1');
-
-class Usuario{
-
+class Usuario
+{
     private $idusuario;
     private $usnombre;
     private $uspass;
     private $usmail;
     private $usdeshabilitado;
-    private $mensaje;
 
     public function __construct()
     {
-        $idusuario = '';
-        $usnombre = '';
-        $uspass = '';
-        $usmail = '';
-        $usdeshabilitado = '';
+        $this->idusuario = "";
+        $this->usnombre = "";
+        $this->uspass = "";
+        $this->usmail = "";
+        $this->usdeshabilitado = "";
     }
 
-    public function cargar($id, $nombre, $pass, $mail, $deshabilidado){
-        $idusuario = $id;
-        $usnombre = $nombre;
-        $uspass = $pass;
-        $usmail = $mail;
-        $usdeshabilitado = $deshabilidado;
+    public function setear($idusuario, $usnombre, $uspass, $usmail, $usdeshabilitado)
+    {
+        $this->setidusuario($idusuario);
+        $this->setusnombre($usnombre);
+        $this->setuspass($uspass);
+        $this->setusmail($usmail);
+        $this->setusdeshabilitado($usdeshabilitado);
     }
 
-    public function getIdusuario(){
+    public function getidusuario()
+    {
         return $this->idusuario;
     }
 
-    public function setIdusuario($idusuario){
-        $this->idusuario = $idusuario;
+    public function setidusuario($valor)
+    {
+        $this->idusuario = $valor;
     }
 
-    public function getUsnombre(){
+    public function getusnombre()
+    {
         return $this->usnombre;
     }
 
-    public function setUsnombre($usnombre){
-        $this->usnombre = $usnombre;
+    public function setusnombre($valor)
+    {
+        $this->usnombre = $valor;
     }
 
-    public function getUspass(){
+    public function getuspass()
+    {
         return $this->uspass;
     }
 
-    public function setUspass($uspass){
-        $this->uspass = $uspass;
+    public function setuspass($valor)
+    {
+        $this->uspass = $valor;
     }
 
-    public function getUsmail(){
+    public function getusmail()
+    {
         return $this->usmail;
     }
 
-    public function setUsmail($usmail){
-        $this->usmail = $usmail;
+    public function setusmail($valor)
+    {
+        $this->usmail = $valor;
     }
 
-    public function getUsdeshabilitado(){
+    public function getusdeshabilitado()
+    {
         return $this->usdeshabilitado;
     }
 
-    public function setUsdeshabilitado($usdeshabilitado){
-        $this->usdeshabilitado = $usdeshabilitado;
-    }
-
-    public function getMensaje(){
-        return $this->mensaje;
-    }
-
-    public function setMensaje($mensaje){
-        $this->mensaje = $mensaje;
-    }
-
-    public function __toString()
+    public function setusdeshabilitado($valor)
     {
-        return "ID: " . $this->getIdusuario() . "
-        Nombre: " . $this->getUsnombre() ."
-        Pass: " . $this->getUspass() . "
-        Mail: " . $this->getUsmail() . "
-        Deshabilitado: " . $this->getUsdeshabilitado();
+        $this->usdeshabilitado = $valor;
     }
 
-    //FUNCIONES DE BASE DE DATOS
-
-    //BUSCAR
-    public function buscar($idusuario)
+    public function getmensajeoperacion()
     {
-        $base = new BaseDatos();
+        return $this->mensajeoperacion;
+    }
+
+    public function setmensajeoperacion($valor)
+    {
+        $this->mensajeoperacion = $valor;
+    }
+
+    public function cargar()
+    {
         $resp = false;
-        $sql = "SELECT * FROM usuario WHERE idusuario = '" . $idusuario . "'";
+        $base = new BaseDatos();
+        $sql = "SELECT * FROM usuario WHERE idusuario = " . $this->getidusuario();
         if ($base->Iniciar()) {
-            if ($base->Ejecutar($sql)) {
-                if ($row2 = $base->Registro()) {
-                    $this->setIdusuario($row2['idusuario']);
-                    $this->setUsnombre($row2['usnombre']);
-                    $this->setUspass($row2['uspass']);
-                    $this->setUsmail($row2['usmail']);
-                    $this->setUsdeshabilitado($row2['stock']);
-                    $resp = true;
+            $res = $base->Ejecutar($sql);
+            if ($res > -1) {
+                if ($res > 0) {
+                    $row = $base->Registro();
+                    $this->setear($row['idusuario'], $row['usnombre'], $row['uspass'], $row['usmail'], $row['usdeshabilitado']);
                 }
-            } else {
-                $this->setMensaje($base->getError());
             }
         } else {
-            $this->setMensaje($base->getError());
+            $this->setmensajeoperacion("Usuario->listar: " . $base->getError());
         }
         return $resp;
     }
 
-    //LISTAR
-    public function listar($condicion = '')
-    {
-        $array = null;
-        $base = new BaseDatos();
-        $sql =  "select * from usuario";
-        if ($condicion != '') {
-            $sql = $sql . ' where ' . $condicion;
-        }
-        if ($base->Iniciar()) {
-            if ($base->Ejecutar($sql)) {
-                $array = array();
-                while ($row2 = $base->Registro()) {
-                    $objusuario = new usuario();
-                    $objusuario->buscar($row2['idusuario']);
-                    $array[] = $objusuario;
-                }
-            } else {
-                $this->setMensaje($base->getError());
-            }
-        } else {
-            $this->setMensaje($base->getError());
-        }
-        return $array;
-    }
 
-    //INSERTAR
+    /** INSERTAR **/
     public function insertar()
     {
-        $base = new BaseDatos();
         $resp = false;
-        //Asigno los datos a variables
-        $idusuario = $this->getIdusuario();
-        $usnombre = $this->getUsnombre();
-        $uspass = $this->getUspass();
-        $usmail = $this->getUsmail();
-        $usdeshabilitado = $this->getUsdeshabilitado();
-        
-        //Creo la consulta 
-        $sql = "INSERT INTO usuario (idusuario, usnombre, uspass, usmail, usdeshabilitado) VALUES ('{$idusuario}', '{$usnombre}', '{$uspass}' , '{$usmail}' , '{$usdeshabilitado}'')";
+        $base = new BaseDatos();
+        $sql = "INSERT INTO usuario(idusuario,usnombre,uspass,usmail,usdeshabilitado) VALUES('" . $this->getidusuario() . "','" . $this->getusnombre() . "','" . $this->getuspass() . "','" . $this->getusmail() . "','" . $this->getusdeshabilitado() . "');";
         if ($base->Iniciar()) {
-            if ($base->Ejecutar($sql)) {
+            if ($elid = $base->Ejecutar($sql)) {
+                $this->setidusuario($elid);
                 $resp = true;
             } else {
-                $this->setMensaje($base->getError());
+                $this->setmensajeoperacion("Usuario->insertar: " . $base->getError());
             }
         } else {
-            $this->setMensaje($base->getError());
+            $this->setmensajeoperacion("Usuario->insertar: " . $base->getError());
         }
         return $resp;
     }
 
-    //MODIFICAR
+
+    /** MODIFICAR **/
     public function modificar()
     {
-        $base = new BaseDatos();
         $resp = false;
-        $idusuario = $this->getIdusuario();
-        $usnombre = $this->getUsnombre();
-        $uspass = $this->getUspass();
-        $usmail = $this->getUsmail();
-        $usdeshabilitado = $this->getUsdeshabilitado();
-        $sql = "UPDATE usuario SET usnombre = '{$usnombre}', uspass = '{$uspass}', usmail = '{$usmail} , usdeshabilitado = '{$usdeshabilitado} WHERE idusuario = '{$idusuario}'";
+        $base = new BaseDatos();
+        $sql = "UPDATE usuario SET usnombre='" . $this->getusnombre() . "',
+        uspass='" . $this->getuspass() . "',
+        usmail='" . $this->getusmail() . "',
+        usdeshabilitado='" . $this->getusdeshabilitado() . "'
+        WHERE idusuario=" . $this->getidusuario();
         if ($base->Iniciar()) {
             if ($base->Ejecutar($sql)) {
                 $resp = true;
             } else {
-                $this->setMensaje($base->getError());
+                $this->setmensajeoperacion("Usuario->modificar: " . $base->getError());
             }
         } else {
-            $this->setMensaje($base->getError());
+            $this->setmensajeoperacion("Usuario->modificar: " . $base->getError());
         }
         return $resp;
     }
 
-    //ELIMINAR
+
+    /** ELIMINAR **/
     public function eliminar()
     {
+        $resp = false;
         $base = new BaseDatos();
-        $rta = false;
-        $consulta = "DELETE FROM usuario WHERE idusuario = " . $this->getIdusuario();
+        $sql = "DELETE FROM usuario WHERE idusuario=" . $this->getidusuario();
         if ($base->Iniciar()) {
-            if ($base->Ejecutar($consulta)) {
-                $rta = true;
+            if ($base->Ejecutar($sql)) {
+                return true;
             } else {
-                $this->setMensaje($base->getError());
+                $this->setmensajeoperacion("Usuario->eliminar: " . $base->getError());
             }
         } else {
-            $this->setMensaje($base->getError());
+            $this->setmensajeoperacion("Usuario->eliminar: " . $base->getError());
         }
-        return $rta;
+        return $resp;
     }
 
-    
+
+    /** LISTAR **/
+    public static function listar($parametro = "")
+    {
+        $arreglo = array();
+        $base = new BaseDatos();
+        $sql = "SELECT * FROM usuario ";
+        if ($parametro != "") {
+            $sql .= 'WHERE ' . $parametro;
+        }
+        $res = $base->Ejecutar($sql);
+        if ($res > -1) {
+            if ($res > 0) {
+                while ($row = $base->Registro()) {
+                    $obj = new Usuario();
+                    $obj->setear($row['idusuario'], $row['usnombre'], $row['uspass'], $row['usmail'], $row['usdeshabilitado']);
+                    array_push($arreglo, $obj);
+                }
+            }
+        } else {
+        }
+        return $arreglo;
+    }
 }
