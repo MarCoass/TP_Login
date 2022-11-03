@@ -3,7 +3,7 @@
 ?>
 
 <div class="container-md my-4 mt-5">
-    <table class="table">
+    <table class="table text-light">
         <thead>
             <tr>
                 <th scope="col">Usuario</th>
