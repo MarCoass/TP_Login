@@ -13,11 +13,11 @@
         
             <?php
             $i = 0;
-            while ($i < $cantUsuarios) {
+            while ($i < 2) {
             ?>
                 <tbody>
                     <tr>
-                        <th>Usuario</th>
+                        <td>Nombre Usuario</td>
                         <td>Rol</td>
                     </tr>
                 </tbody>

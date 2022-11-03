@@ -1,5 +1,5 @@
 <footer class="page-footer font-small position-relative bottom-0">
-  El footer mas guapo que van a ver en sus vidas beibis.
+  Equipo alfa buena onda 10.1
 </footer>
 </body>
 </html>
