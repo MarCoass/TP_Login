@@ -1,5 +1,5 @@
 <?php
-include_once '../Modelo/Rol.php';
+include_once '../Modelo/UsuarioRol.php';
 
 class C_UsuarioRol
 {
